@@ -1,31 +1,46 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <span class="text">asdfASDgh</span>
     <router-view/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
+<script>
+  import { mapGetters } from 'vuex'
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  const getters = {
+    a: () => 1,
+    b: () => 2
+  }
+  function fn(keys) {
+    const data = {}
+    keys.forEach(key => {
+      if (getters.hasOwnProperty(key)) {
+        data[key] = getters[key]
+      }
+    })
+    return data
+  }
+  export default {
+    computed: {
+      ...mapGetters(['test']),
+      ...fn(['a', 'b', 'c'])
+    },
+    mounted() {
+      // this.$store.dispatch('setTest', 7).then(() => {
+      //   // console.log(this.$store.state.book.test)
+      //   console.log(this.test)
+      // })
+      console.log(this.a, this.b, this.c)
+    }
+  }
+</script>
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+<style scoped lang="scss">
+  @import "./assets/styles/global";
+  .text{
+    font-family: 'Days One';
+    font-size: 20px;
+    color: orange;
+  }
 </style>
