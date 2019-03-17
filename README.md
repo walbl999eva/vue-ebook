@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# vue-imooc-ebook
+# vue-ebook
 
 ## Project setup
 ```
@@ -31,5 +31,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 =======
 # e-book
 
-电子书实战
-### >>>>>>> 0fafc4f4135b7d5fa0c507c0f41e36094dffef97
+微信电子书App项目
