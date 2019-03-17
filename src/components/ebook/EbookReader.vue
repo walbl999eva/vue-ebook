@@ -59,17 +59,17 @@
         let defaultTheme = getTheme(this.fileName)
         if (!defaultTheme) {
           defaultTheme = this.themeList[0].name
-          // 异步
-          this.setDefaultTheme(defaultTheme)
           saveTheme(this.fileName, defaultTheme)
         }
+        // 异步
+        this.setDefaultTheme(defaultTheme)
         this.themeList.forEach(theme => {
           this.rendition.themes.register(theme.name, theme.style)
         })
         this.rendition.themes.select(defaultTheme)
       },
       initEpub() {
-        const url = 'http://192.168.123.4:8081/epub/' + this.fileName + '.epub'
+        const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
         // 拿到url开始DOM渲染
@@ -85,6 +85,7 @@
           this.initFontFamily()
           this.initFontSize()
           this.initTheme()
+          this.initGlobalStyle()
         })
         // 绑定事件到iframe
         this.rendition.on('touchstart', e => {
