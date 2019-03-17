@@ -7,7 +7,15 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import Epub from 'epubjs'
-  import { getFontFamily, saveFontFamily, getFontSize, saveFontSize, getTheme, saveTheme } from '../../utils/localStorage'
+  import {
+    getFontFamily,
+    saveFontFamily,
+    getFontSize,
+    saveFontSize,
+    getTheme,
+    saveTheme,
+    getLocation
+  } from '../../utils/localStorage'
 
   export default {
     name: 'EbookReader',
@@ -15,13 +23,17 @@
     methods: {
       prevPage() {
         if (this.rendition) {
-          this.rendition.prev()
+          this.rendition.prev().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
       nextPage() {
         if (this.rendition) {
-          this.rendition.next()
+          this.rendition.next().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
@@ -68,10 +80,7 @@
         })
         this.rendition.themes.select(defaultTheme)
       },
-      initEpub() {
-        const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
-        this.book = new Epub(url)
-        this.setCurrentBook(this.book)
+      initRendition() {
         // 拿到url开始DOM渲染
         this.rendition = this.book.renderTo('read', {
           width: window.innerWidth,
@@ -79,14 +88,27 @@
           // 兼容微信
           method: 'default'
         })
-        // 显示电子书
-        this.rendition.display().then(() => {
+
+        const location = getLocation(this.fileName)
+        // 显示电子书,有进度缓存直接显示进度位置
+        this.display(location, () => {
           // 初始化读取localStorage，设置样式
           this.initFontFamily()
           this.initFontSize()
           this.initTheme()
           this.initGlobalStyle()
         })
+        // 内容加载完之后的钩子函数
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+          ]).then(() => {})
+        })
+      },
+      initGesture() {
         // 绑定事件到iframe
         this.rendition.on('touchstart', e => {
           this.touchStartX = e.changedTouches[0].clientX
@@ -106,14 +128,19 @@
           e.preventDefault()
           e.stopPropagation()
         })
-        // 内容加载完之后的钩子函数
-        this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
-          ]).then(() => {})
+      },
+      initEpub() {
+        const url = `${process.env.VUE_APP_RES_URL}/epub/` + this.fileName + '.epub'
+        this.book = new Epub(url)
+        this.setCurrentBook(this.book)
+        this.initRendition()
+        this.initGesture()
+        this.book.ready.then(() => {
+          return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
+        }).then(locations => {
+          // console.log(locations)
+          this.setBookAvailable(true)
+          this.refreshLocation()
         })
       }
     },
