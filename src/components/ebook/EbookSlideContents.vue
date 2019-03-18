@@ -9,14 +9,18 @@
                class="slide-contents-search-input"
                :placeholder="$t('book.searchHint')"
                @click="showSearchPage()"
+               @keyup.enter.exact="search()"
+               v-model="searchText"
         >
       </div>
       <div class="slide-contents-search-cancel"
            v-if="searchVisible"
            @click="hideSearchPage()"
-      >{{$t('book.cancel')}}</div>
+      >
+        {{$t('book.cancel')}}
+      </div>
     </div>
-    <div class="slide-contents-book-wrapper">
+    <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
         <img class="slide-contents-book-img" :src="cover">
       </div>
@@ -32,27 +36,102 @@
         <div class="slide-contents-book-time">{{getReadTimeText()}}</div>
       </div>
     </div>
+    <scroll class="slide-contents-list"
+            :top="156"
+            :bottom="48"
+            v-show="!searchVisible"
+    >
+      <div class="slide-contents-item"
+           v-for="(item,index) in navigation"
+           :key="index"
+      >
+        <span class="slide-contents-item-label"
+              :style="contentItemStyle(item)"
+              :class="{'selected':section===index}"
+              @click="displayContent(item.href)"
+        >
+          {{item.label}}
+        </span>
+        <span class="slide-contents-item-page"></span>
+      </div>
+    </scroll>
+    <scroll class="slide-search-list"
+            v-show="searchVisible"
+            :top="66"
+            :bottom="48"
+    >
+      <div class="slide-search-item"
+           v-for="(item,index) in searchList"
+           :key="index"
+           v-html="item.excerpt"
+           @click="displayContent(item.cfi,true)"
+      ></div>
+    </scroll>
   </div>
 </template>
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import { px2rem } from '../../utils/utils'
+  import Scroll from '../common/Scroll'
 
   export default {
     name: 'EbookSlideContents',
     mixins: [ebookMixin],
     data() {
       return {
-        searchVisible: false
+        searchVisible: false,
+        searchList: null,
+        searchText: ''
       }
     },
     methods: {
+      search() {
+        if (this.searchText && this.searchText.length > 0) {
+          this.doSearch(this.searchText).then(list => {
+            this.searchList = list
+            let reg = new RegExp(this.searchText, 'gi')
+            this.searchList.map(item => {
+              let matchText = reg.exec(item.excerpt)
+              item.excerpt = item.excerpt.replace(reg, `<span class="content-search-text">${matchText}</span>`)
+              return item
+            })
+          })
+        }
+      },
+      doSearch(q) {
+        return Promise.all(
+          this.currentBook.spine.spineItems
+            .map(section => section.load(this.currentBook.load.bind(this.currentBook))
+            .then(section.find.bind(section, q))
+            .finally(section.unload.bind(section)))
+        ).then(results => Promise.resolve([].concat.apply([], results)))
+      },
+      displayContent(target, highlight = false) {
+        this.display(target, () => {
+          this.hideTitleAndMenu()
+          // 将target高亮
+          if (highlight) {
+            this.currentBook.rendition.annotations.highlight(target)
+          }
+        })
+      },
       showSearchPage() {
         this.searchVisible = true
       },
       hideSearchPage() {
         this.searchVisible = false
+        this.searchText = ''
+        this.searchList = null
+      },
+      contentItemStyle(item) {
+        return {
+          marginLeft: `${px2rem(item.level * 15)}rem`
+        }
       }
+    },
+    components: {
+      Scroll
     }
   }
 </script>
@@ -144,6 +223,32 @@
           margin-top: 7px;
           font-size: 12px;
         }
+      }
+    }
+    .slide-contents-list{
+      padding: 0 15px;
+      box-sizing: border-box;
+      .slide-contents-item{
+        display: flex;
+        padding: 18px 0;
+        .slide-contents-item-label{
+          flex: 1;
+          line-height: 16px;
+          font-size: 14px;
+          @include ellipsis;
+        }
+        .slide-contents-item-page{}
+      }
+    }
+    .slide-search-list{
+      width: 100%;
+      padding: 0 15px;
+      box-sizing: border-box;
+      .slide-search-item{
+        font-size: 14px;
+        line-height: 16px;
+        padding: 20px 0;
+        box-sizing: border-box;
       }
     }
   }

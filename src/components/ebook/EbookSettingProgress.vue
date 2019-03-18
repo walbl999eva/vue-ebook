@@ -25,7 +25,7 @@
         </div>
         <div class="text-wrapper">
           <span class="progress-section-text">{{getSectionName}}</span>
-          <span>({{bookAvailable ? progress + '%' : '加载中...'}})</span>
+          <span :class="{'onload':!bookAvailable}">({{bookAvailable ? progress + '%' : '加载中...'}})</span>
         </div>
       </div>
     </div>
@@ -43,11 +43,15 @@
     },
     computed: {
       getSectionName() {
-        if (this.section) {
-          const sectionInfo = this.currentBook.section(this.section)
-          if (sectionInfo && sectionInfo.href && this.currentBook.navigation) {
-            return this.currentBook.navigation.get(sectionInfo.href).label
-          }
+        if (this.section >= 0 && this.navigation && this.navigation.length > 0) {
+          return this.navigation[this.section].label
+
+          // const sectionInfo = this.currentBook.section(this.section)
+          // if (sectionInfo && sectionInfo.href && this.currentBook.navigation) {
+          //   return this.currentBook.navigation.get(sectionInfo.href).label
+          // }
+        } else {
+          return ''
         }
       }
     },
@@ -160,7 +164,7 @@
       .text-wrapper {
         position: absolute;
         left: 0;
-        bottom: 10px;
+        bottom: 7px;
         width: 100%;
         color: #333;
         font-size: 12px;
@@ -169,8 +173,13 @@
         @include center;
 
         .progress-section-text{
+          line-height: 16px;
           margin-right: 5px;
           @include ellipsis;
+        }
+        .onload{
+          width: 60px;
+          text-align: center;
         }
       }
     }

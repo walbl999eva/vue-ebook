@@ -72,21 +72,23 @@ export const ebookMixin = {
     },
     refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation()
-      const startCfi = currentLocation.start.cfi
-      const progress = this.currentBook.locations.percentageFromCfi(startCfi)
-      this.setProgress(Math.floor(progress * 100))
-      this.setSection(currentLocation.start.index)
-      // 保存进度
-      saveLocation(this.fileName, startCfi)
+      if (currentLocation && currentLocation.start) {
+        const startCfi = currentLocation.start.cfi
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+        this.setProgress(Math.floor(progress * 100))
+        this.setSection(currentLocation.start.index)
+        // 保存进度
+        saveLocation(this.fileName, startCfi)
+      }
     },
     display(target, cb) {
       if (target) {
-        return this.currentBook.rendition.display(target).then(() => {
+        this.currentBook.rendition.display(target).then(() => {
           this.refreshLocation()
           if (cb) cb()
         })
       } else {
-        return this.currentBook.rendition.display().then(() => {
+        this.currentBook.rendition.display().then(() => {
           this.refreshLocation()
           if (cb) cb()
         })

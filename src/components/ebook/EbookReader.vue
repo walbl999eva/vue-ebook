@@ -6,6 +6,7 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import { flat } from '../../utils/book'
   import Epub from 'epubjs'
   import {
     getFontFamily,
@@ -126,13 +127,30 @@
         })
       },
       parseBook() {
+        // 获取封面url
         this.book.loaded.cover.then(cover => {
           this.book.archive.createUrl(cover).then(url => {
             this.setCover(url)
           })
         })
+        // 获取书籍信息
         this.book.loaded.metadata.then(metadata => {
           this.setMetadata(metadata)
+        })
+        // 获取目录信息
+        this.book.loaded.navigation.then(nav => {
+          // 扁平化数据结构
+          const navItem = flat(nav.toc)
+          // 使用递归，判断每一项层级,0:一级目录，1：二级目录...
+          function find (item, level = 0) {
+            return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+          }
+          // 遍历每一项增加对应level层级属性
+          navItem.forEach(item => {
+            item.level = find(item)
+          })
+          // 保存到vuex navigation
+          this.setNavigation(navItem)
         })
       },
       initEpub() {
