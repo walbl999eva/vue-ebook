@@ -15,6 +15,7 @@
 <script>
   import Bookmark from '../common/Bookmark'
   import { realPx } from '../../utils/utils'
+  import { getBookmark, saveBookmark } from '../../utils/localStorage'
   import { ebookMixin } from '../../utils/mixin'
 
   const BLUE = '#346cbc'
@@ -46,6 +47,14 @@
           // 4
           this.restore()
         }
+      },
+      isBookmark(boolean) {
+        this.isFixed = boolean
+        if (boolean) {
+          this.color = BLUE
+        } else {
+          this.color = WHITE
+        }
       }
     },
     computed: {
@@ -64,16 +73,51 @@
       }
     },
     methods: {
-      addBookmark() {},
-      removeBookmark() {},
+      addBookmark() {
+        this.bookmark = getBookmark(this.fileName)
+        if (!this.bookmark) {
+          this.bookmark = []
+        }
+        const currentLocation = this.currentBook.rendition.currentLocation()
+        const cfibase = currentLocation.start.cfi.replace(/!.*/, '')
+        const cfistart = currentLocation.start.cfi.replace(/.*!/, '').replace(/\)$/, '')
+        const cfiend = currentLocation.end.cfi.replace(/.*!/, '').replace(/\)$/, '')
+        const cfirange = `${cfibase}!,${cfistart},${cfiend})`
+
+        this.currentBook.getRange(cfirange).then(range => {
+          const text = range.toString().replace(/\s\s/g, '')
+          this.bookmark.push({
+            cfi: currentLocation.start.cfi,
+            text: text
+          })
+          // localStorage
+          saveBookmark(this.fileName, this.bookmark)
+          // vuex
+          this.setBookmarkList(this.bookmark)
+        })
+      },
+      removeBookmark() {
+        const currentLocation = this.currentBook.rendition.currentLocation()
+        const cfi = currentLocation.start.cfi
+        this.bookmark = getBookmark(this.fileName)
+        if (this.bookmark) {
+          this.bookmark = this.bookmark.filter(item => item.cfi !== cfi)
+          saveBookmark(this.fileName, this.bookmark)
+          // vuex
+          this.setBookmarkList(this.bookmark)
+          this.setIsBookmark(false)
+        }
+      },
       restore() {
         setTimeout(() => {
           this.$refs.bookmark.style.top = `${-this.height}px`
           this.$refs.iconDown.style.transform = 'rotate(0deg)'
         }, 200)
         if (this.isFixed) {
-          this.setIsBookmark(true)
-          this.addBookmark()
+          if (this.isBookmark === false) {
+            this.setIsBookmark(true)
+            this.addBookmark()
+          }
         } else {
           this.setIsBookmark(false)
           this.removeBookmark()
@@ -83,9 +127,11 @@
         if (this.isBookmark) {
           this.text = this.$t('book.pulldownDeleteMark')
           this.color = BLUE
+          this.isFixed = true
         } else {
           this.text = this.$t('book.pulldownAddMark')
           this.color = WHITE
+          this.isFixed = false
         }
       },
       beforeThreshold(v) {

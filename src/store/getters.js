@@ -18,6 +18,7 @@ const getters = {
   pagelist: state => state.book.pagelist,
   offsetY: state => state.book.offsetY,
   isBookmark: state => state.book.isBookmark,
+  bookmarkList: state => state.book.bookmarkList,
   speakingIconBottom: state => state.book.speakingIconBottom
 }
 

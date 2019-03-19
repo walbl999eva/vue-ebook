@@ -53,6 +53,9 @@ const actions = {
   setIsBookmark({ commit }, isBookmark) {
     return commit('SET_IS_BOOKMARK', isBookmark)
   },
+  setBookmarkList({ commit }, bookmarkList) {
+    return commit('SET_BOOKMARKLIST', bookmarkList)
+  },
   setOffsetY({ commit }, offsetY) {
     return commit('SET_OFFSETY', offsetY)
   },

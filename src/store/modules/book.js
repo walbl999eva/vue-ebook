@@ -18,6 +18,7 @@ const book = {
     paginate: '',
     pagelist: null,
     offsetY: 0,
+    bookmarkList: null,
     isBookmark: null
   },
   mutations: {
@@ -77,6 +78,9 @@ const book = {
     },
     'SET_IS_BOOKMARK': (state, isBookmark) => {
       state.isBookmark = isBookmark
+    },
+    'SET_BOOKMARKLIST': (state, bookmarkList) => {
+      state.bookmarkList = bookmarkList
     },
     'SET_SPEAKING_ICON_BOTTOM': (state, speakingIconBottom) => {
       state.speakingIconBottom = speakingIconBottom
