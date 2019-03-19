@@ -173,6 +173,7 @@
         @include center;
 
         .progress-section-text{
+          flex: 1;
           line-height: 16px;
           margin-right: 5px;
           @include ellipsis;
