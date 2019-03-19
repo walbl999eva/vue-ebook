@@ -29,6 +29,14 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 =======
-# e-book
+# 微信电子书App项目
 
-微信电子书App项目
+技术栈
+```
+框架 Vue 2.5 
+脚手架 Vue-cli 3.0 
+构建工具 Webpack4.0 
+框架 Nodejs10.10.0 
+工具 npm6.4.1
+```
+
