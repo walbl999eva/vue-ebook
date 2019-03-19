@@ -35,8 +35,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 框架 Vue 2.5 
 脚手架 Vue-cli 3.0 
-构建工具 Webpack4.0 
-框架 Nodejs10.10.0 
-工具 npm6.4.1
+构建工具 Webpack 4.0 
+框架 Nodejs 10.10.0 
+工具 npm 6.4.1
 ```
 
