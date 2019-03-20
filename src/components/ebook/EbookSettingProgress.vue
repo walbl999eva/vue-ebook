@@ -41,20 +41,6 @@
     updated() {
       this.updateProgressBg()
     },
-    computed: {
-      getSectionName() {
-        if (this.section >= 0 && this.navigation && this.navigation.length > 0) {
-          return this.navigation[this.section].label
-
-          // const sectionInfo = this.currentBook.section(this.section)
-          // if (sectionInfo && sectionInfo.href && this.currentBook.navigation) {
-          //   return this.currentBook.navigation.get(sectionInfo.href).label
-          // }
-        } else {
-          return ''
-        }
-      }
-    },
     methods: {
       onProgressChange(progress) {
         this.setProgress(progress).then(() => {

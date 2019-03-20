@@ -25,8 +25,12 @@
         <img class="slide-contents-book-img" :src="cover">
       </div>
       <div class="slide-contents-book-info-wrapper">
-        <div class="slide-contents-book-title">{{metadata.title}}</div>
-        <div class="slide-contents-book-author">{{metadata.creator}}</div>
+        <div class="slide-contents-book-title">
+          <span class="slide-contents-book-title-text">{{metadata.title}}</span>
+        </div>
+        <div class="slide-contents-book-author">
+          <span class="slide-contents-book-author-text">{{metadata.creator}}</span>
+        </div>
       </div>
       <div class="slide-contents-book-progress-wrapper">
         <div class="slide-contents-book-progress">
@@ -52,7 +56,7 @@
         >
           {{item.label}}
         </span>
-        <span class="slide-contents-item-page"></span>
+        <span class="slide-contents-item-page">{{item.page}}</span>
       </div>
     </scroll>
     <scroll class="slide-search-list"
@@ -193,16 +197,22 @@
         padding: 0 10px;
         box-sizing: border-box;
         .slide-contents-book-title{
-          width: 153.75px;
+          /*width: 153.75px;*/
           font-size: 14px;
           line-height: 16px;
-          @include multiline-ellipsis(2);
+          @include left;
+          .slide-contents-book-title-text{
+            @include multiline-ellipsis(2);
+          }
         }
         .slide-contents-book-author{
           font-size: 12px;
-          line-height: 16px;
+          line-height: 14px;
           margin-top: 5px;
-          @include multiline-ellipsis(2);
+          @include left;
+          .slide-contents-book-author-text{
+            @include multiline-ellipsis(2);
+          }
         }
       }
       .slide-contents-book-progress-wrapper{
@@ -237,7 +247,11 @@
           font-size: 14px;
           @include ellipsis;
         }
-        .slide-contents-item-page{}
+        .slide-contents-item-page{
+          flex: 0 0 30px;
+          font-size: 10px;
+          @include right;
+        }
       }
     }
     .slide-search-list{

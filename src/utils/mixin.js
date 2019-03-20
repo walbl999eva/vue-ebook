@@ -28,6 +28,18 @@ export const ebookMixin = {
     ]),
     themeList() {
       return themeList(this)
+    },
+    getSectionName() {
+      if (this.section >= 0 && this.navigation && this.navigation.length > 0) {
+        return this.navigation[this.section].label
+
+        // const sectionInfo = this.currentBook.section(this.section)
+        // if (sectionInfo && sectionInfo.href && this.currentBook.navigation) {
+        //   return this.currentBook.navigation.get(sectionInfo.href).label
+        // }
+      } else {
+        return ''
+      }
     }
   },
   methods: {
@@ -91,6 +103,18 @@ export const ebookMixin = {
           }
         } else {
           this.setIsBookmark(false)
+        }
+        // 判断当前的页码
+        if (this.pagelist) {
+          const totalPage = this.pagelist.length
+          const curPage = currentLocation.start.location
+          if (curPage && curPage > 0) {
+            this.setPaginate(curPage + ' / ' + totalPage)
+          } else {
+            this.setPaginate('')
+          }
+        } else {
+          this.setPaginate('')
         }
       }
     },

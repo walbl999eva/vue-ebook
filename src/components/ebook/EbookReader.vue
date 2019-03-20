@@ -5,6 +5,9 @@
          @click="onMaskClick"
          @touchmove="move"
          @touchend="moveEnd"
+         @mousedown.left="onMouseEnter"
+         @mousemove.left="onMouseMove"
+         @mouseup.left="onMouseEnd"
     ></div>
   </div>
 </template>
@@ -27,6 +30,43 @@
     name: 'EbookReader',
     mixins: [ebookMixin],
     methods: {
+      onMouseEnter(e) {
+        this.mouseState = 1
+        this.mouseStartTime = e.timeStamp
+        e.preventDefault()
+        e.stopPropagation()
+      },
+      onMouseMove(e) {
+        if (this.mouseState === 1) {
+          this.mouseState = 2
+        } else if (this.mouseState === 2) {
+          let offsetY = 0
+          if (this.firstOffsetY) {
+            offsetY = e.clientY - this.firstOffsetY
+            this.setOffsetY(offsetY)
+          } else {
+            this.firstOffsetY = e.clientY
+          }
+        }
+        e.preventDefault()
+        e.stopPropagation()
+      },
+      onMouseEnd(e) {
+        if (this.mouseState === 2) {
+          this.setOffsetY(0)
+          this.firstOffsetY = null
+          this.mouseState = 3
+        } else {
+          this.mouseState = 4
+        }
+        // 根据点击事件差改变鼠标状态(允许点击时轻微移动)
+        const time = e.timeStamp - this.mouseStartTime
+        if (time < 100) {
+          this.mouseState = 4
+        }
+        e.preventDefault()
+        e.stopPropagation()
+      },
       move(e) {
         let offsetY = 0
         if (this.firstOffsetY) {
@@ -35,6 +75,7 @@
         } else {
           this.firstOffsetY = e.changedTouches[0].clientY
         }
+        // 兼容微信
         e.preventDefault()
         e.stopPropagation()
       },
@@ -43,6 +84,9 @@
         this.firstOffsetY = null
       },
       onMaskClick(e) {
+        if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
+          return
+        }
         const offsetX = e.offsetX
         const width = window.innerWidth
         if (offsetX > 0 && offsetX < width * 0.3) {
@@ -115,6 +159,7 @@
           height: window.innerHeight,
           // 兼容微信
           method: 'default'
+          // flow: 'scrolled'
         })
 
         const location = getLocation(this.fileName)
@@ -194,7 +239,34 @@
         this.book.ready.then(() => {
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
         }).then(locations => {
-          // console.log(locations)
+          // 目录每一项增加pagelist属性存放章节每页cfi
+          this.navigation.forEach(nav => {
+            nav.pagelist = []
+          })
+          // 遍历每页信息获取cfi文本
+          locations.forEach(item => {
+            const loc = item.match(/\[(.*)\]!/)[1]
+            // 将对应cfi放到对应导航章节目录下
+            this.navigation.forEach(nav => {
+              if (nav.href) {
+                const href = nav.href.match(/^(.*)\.html$/)[1]
+                if (href === loc) {
+                  nav.pagelist.push(item)
+                }
+              }
+            })
+            // 计算每章节第一页页码
+            let curPage = 1
+            this.navigation.forEach((nav, index) => {
+              if (index === 0) {
+                nav.page = 1
+              } else {
+                nav.page = curPage
+              }
+              curPage += nav.pagelist.length + 1
+            })
+          })
+          this.setPagelist(locations)
           this.setBookAvailable(true)
           this.refreshLocation()
         })

@@ -76,7 +76,7 @@
       }
       .slide-bookmark-item-text{
         font-size: 14px;
-        line-height: 15px;
+        line-height: 16px;
         min-height: 45px;
         @include multiline-ellipsis(3)
       }
