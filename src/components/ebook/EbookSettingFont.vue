@@ -118,17 +118,16 @@
             border-left: 1px solid #ccc;
             .point {
               position: absolute;
-              top: -8px;
-              left: -1px;
+              top: -7.5px;
+              left: -10px;
               width: 20px;
               height: 20px;
               border-radius: 50%;
               background: white;
               border: 1px solid #ccc;
               box-shadow: 0 4px 4px rgba(0, 0, 0, .15);
-              //@include center;
+              @include center;
               .small-point {
-                transform: translate3d(7.5px,7.5px,0);
                 width: 5px;
                 height: 5px;
                 background: black;

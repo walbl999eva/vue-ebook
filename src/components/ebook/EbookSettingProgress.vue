@@ -159,12 +159,12 @@
         @include center;
 
         .progress-section-text{
-          flex: 1;
           line-height: 16px;
           margin-right: 5px;
           @include ellipsis;
         }
         .onload{
+          flex: 0 0 60px;
           width: 60px;
           text-align: center;
         }

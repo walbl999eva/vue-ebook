@@ -114,7 +114,7 @@
           this.$refs.iconDown.style.transform = 'rotate(0deg)'
         }, 200)
         if (this.isFixed) {
-          if (this.isBookmark === false) {
+          if (!this.isBookmark) {
             this.setIsBookmark(true)
             this.addBookmark()
           }
