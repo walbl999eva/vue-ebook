@@ -1,6 +1,6 @@
 module.exports = {
   lintOnSave: true,
-  baseUrl: process.env.NODE_ENV === 'production' ? './' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   css: {
     loaderOptions: {
       postcss: {

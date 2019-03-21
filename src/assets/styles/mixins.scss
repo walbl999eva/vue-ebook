@@ -63,6 +63,19 @@ $ratio: 375 / 10;
   align-items: center;
 }
 
+@mixin top{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@mixin columnCenter{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .icon{
   color: #666;
   font-size: 16px;
