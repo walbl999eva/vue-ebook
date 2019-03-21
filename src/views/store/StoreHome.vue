@@ -34,7 +34,7 @@
       <div>11111111111111</div>
       <div>11111111111111</div>
     </scroll>
-    <flap-card/>
+    <flap-card :data="random"/>
   </div>
 </template>
 
@@ -43,13 +43,15 @@
   import Scroll from '../../components/common/Scroll'
   import FlapCard from '../../components/home/FlapCard'
   import { storeHomeMixin } from '../../utils/mixin'
+  import { home } from '../../api/store'
 
   export default {
     name: 'StoreHome',
     mixins: [storeHomeMixin],
     data() {
       return {
-        scrollTop: 94
+        scrollTop: 94,
+        random: null
       }
     },
     components: {
@@ -67,6 +69,15 @@
         }
         this.$refs.scroll.refresh()
       }
+    },
+    mounted () {
+      home().then(res => {
+        if (res && res.status === 200) {
+          const data = res.data
+          const randomIndex = Math.floor(Math.random() * data.random.length)
+          this.random = data.random[randomIndex]
+        }
+      })
     }
   }
 </script>
