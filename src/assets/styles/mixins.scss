@@ -1,3 +1,6 @@
+$animationTime: .2s;
+$animationType: linear;
+
 @mixin center {
   display: flex;
   justify-content: center;
@@ -30,4 +33,31 @@
   -webkit-box-orient: vertical;
   white-space: normal !important;
   word-wrap: break-word;
+}
+
+@mixin columnLeft{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@mixin absCenter{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.icon{
+  color: #666;
+  font-size: 16px;
+}
+
+.title{
+  color: #666;
+  font-size: 16px;
+  font-weight: bold;
 }

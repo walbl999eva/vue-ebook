@@ -1,20 +1,21 @@
 <template>
-  <div id="app">
+  <div class="store">
     <router-view/>
   </div>
 </template>
 
 <script>
   export default {
-
+    name: 'index'
   }
 </script>
 
-<style scoped lang="scss">
-  #app{
+<style lang="scss" scoped>
+  @import "../../assets/styles/global";
+
+  .store{
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    background: #7d8188;
+    background: #fff;
   }
 </style>

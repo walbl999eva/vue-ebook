@@ -61,6 +61,12 @@ const actions = {
   },
   setSpeakingIconBottom({ commit }, speakingIconBottom) {
     commit('SET_SPEAKING_ICON_BOTTOM', speakingIconBottom)
+  },
+  setHotSearchOffsetY({ commit }, OffsetY) {
+    commit('SET_HOT_SEARCH_OFFSETY', OffsetY)
+  },
+  setFlapCardVisible({ commit }, visible) {
+    commit('SET_FLAP_CARD_VISIBLE', visible)
   }
 }
 

@@ -19,7 +19,9 @@ const getters = {
   offsetY: state => state.book.offsetY,
   isBookmark: state => state.book.isBookmark,
   bookmarkList: state => state.book.bookmarkList,
-  speakingIconBottom: state => state.book.speakingIconBottom
+  speakingIconBottom: state => state.book.speakingIconBottom,
+  hotSearchOffsetY: state => state.store.hotSearchOffsetY,
+  flapCardVisible: state => state.store.flapCardVisible
 }
 
 export default getters
