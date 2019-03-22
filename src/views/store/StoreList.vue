@@ -4,13 +4,16 @@
     <detail-title :title="title"
                   :showShelf="true"
                   @back="back"
-                  ref="title"></detail-title>
+                  ref="title"/>
     <scroll class="book-list-scroll-wrapper"
             :top="42"
             @onScroll="onScroll"
             ref="scroll">
-      <featured :data="value" :titleText="titleText ? titleText : getCategoryText(key)" :btnText="''" v-for="(value, key, index) in list"
-                :key="index"></featured>
+      <featured :data="value"
+                :titleText="titleText ? titleText : getCategoryText(key)"
+                :btnText="''"
+                v-for="(value, key, index) in list"
+                :key="index"/>
     </scroll>
   </div>
 </template>
@@ -74,6 +77,7 @@
         list().then(response => {
           this.list = response.data.data
           this.total = response.data.total
+          // console.log(this.list)
           const category = this.$route.query.category
           const keyword = this.$route.query.keyword
           if (category) {

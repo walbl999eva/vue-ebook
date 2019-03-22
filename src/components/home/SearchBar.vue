@@ -25,6 +25,7 @@
                  :placeholder="$t('home.hint')"
                  v-model="searchText"
                  @click="showHotSearch"
+                 @keyup.enter.exact="search"
           >
         </div>
       </div>
@@ -70,6 +71,14 @@
       }
     },
     methods: {
+      search() {
+        this.$router.push({
+          path: '/store/list',
+          query: {
+            keyword: this.searchText
+          }
+        })
+      },
       showFlapCard() {
         this.setFlapCardVisible(true)
       },
@@ -79,7 +88,11 @@
         } else {
           this.hideShadow()
         }
-        this.hideHotSearch()
+        if (this.hotSearchVisible) {
+          this.hideHotSearch()
+        } else {
+          this.$router.push('/store/shelf')
+        }
       },
       hideHotSearch() {
         this.hotSearchVisible = false

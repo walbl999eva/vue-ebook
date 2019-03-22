@@ -2,7 +2,7 @@
   <div class="book-detail">
     <detail-title @back="back"
                   :showShelf="true"
-                  ref="title"></detail-title>
+                  ref="title"/>
     <scroll class="content-wrapper"
             :top="42"
             :bottom="52"
@@ -11,7 +11,7 @@
       <book-info :cover="cover"
                  :title="title"
                  :author="author"
-                 :desc="desc"></book-info>
+                 :desc="desc"/>
       <div class="book-detail-content-wrapper">
         <div class="book-detail-content-title">{{$t('detail.copyright')}}</div>
         <div class="book-detail-content-list-wrapper">
@@ -69,7 +69,7 @@
         {{inBookShelf ? $t('detail.isAddedToShelf') : $t('detail.addOrRemoveShelf')}}
       </div>
     </div>
-    <toast :text="toastText" ref="toast"></toast>
+    <toast :text="toastText" ref="toast"/>
   </div>
 </template>
 

@@ -37,11 +37,13 @@
     border-bottom: 1px solid #eee;
     box-sizing: border-box;
     .cover-title-left-wrapper {
-      flex: 0 0 103px;
+      flex: 0 0 118px;
+      width: 118px;
       padding: 10px 0 10px 15px;
       box-sizing: border-box;
       @include top;
       .cover-img {
+        /*width: 100%;*/
         width: 103px;
         height: 146px;
       }
@@ -50,12 +52,14 @@
       flex: 1;
       padding: 10px 15px;
       box-sizing: border-box;
+      overflow: hidden;
       .detail-cover-title-wrapper {
         .cover-title-text {
           font-size: 24px;
           line-height: 26px;
           font-weight: bold;
           color: #333;
+          @include multiline-ellipsis(3);
         }
       }
       .cover-author-wrapper {
@@ -64,6 +68,7 @@
           font-size: 14px;
           line-height: 16px;
           color: $color-blue;
+          @include multiline-ellipsis(2);
         }
       }
       .detail-cover-description-wrapper {
@@ -72,11 +77,7 @@
           font-size: 14px;
           line-height: 16px;
           color: #666;
-          word-break: keep-all;
-          white-space: normal;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          overflow-wrap: break-word;
+          @include multiline-ellipsis(4);
         }
       }
     }

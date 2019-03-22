@@ -178,3 +178,29 @@ export const categoryList = {
   'Psychology': 21,
   'Statistics': 22
 }
+
+export function appendAddToShelf(list) {
+  list.push({
+    id: -1,
+    type: 3
+  })
+  return list
+}
+
+export function appendAddFromShelf(list) {
+  return list.filter(item => item.type !== 3)
+}
+
+export function goStoreHome(vue) {
+  vue.$router.push('/store/home')
+}
+
+export function goBookDetail(vue, book) {
+  vue.$router.push({
+    path: '/store/detail',
+    query: {
+      fileName: book.fileName,
+      category: book.categoryText
+    }
+  })
+}
