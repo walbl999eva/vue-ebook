@@ -6,7 +6,10 @@
                class="shelf-item-comp"
                :class="{'is-edit':isEditMode && data.type===2}"
     />
-    <div class="icon-selected" v-show="isEditMode && data.type===1"></div>
+    <div class="icon-selected"
+         :class="{'is-selected':data.selected}"
+         v-show="isEditMode && data.type===1"
+    ></div>
   </div>
 </template>
 
@@ -38,12 +41,27 @@
     },
     methods: {
       onItemClick() {
-        if (this.data.type === 1) {
-          this.showBookDetail(this.data)
-        } else if (this.data.type === 2) {
-          console.log('aa')
+        if (this.isEditMode) {
+          if (this.data.type === 2 || this.data.type === 3) return
+          this.data.selected = !this.data.selected
+          if (this.data.selected) {
+            this.shelfSelected.pushWithoutDuplicate(this.data)
+          } else {
+            this.setShelfSelected(this.shelfSelected.filter(item => item.id !== this.data.id))
+          }
         } else {
-          goStoreHome(this)
+          if (this.data.type === 1) {
+            this.showBookDetail(this.data)
+          } else if (this.data.type === 2) {
+            this.$router.push({
+              path: '/store/category',
+              query: {
+                title: this.data.title
+              }
+            })
+          } else {
+            goStoreHome(this)
+          }
         }
       }
     }
@@ -56,6 +74,7 @@
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     &.shelf-item-shadow{
       box-shadow: 2px 2px 6px 2px rgba(200,200,200,.3);
     }
@@ -71,6 +90,9 @@
       right: 2px;
       font-size: 18px;
       color: rgba(243, 255, 251, 0.4);
+      &.is-selected{
+        color: $color-blue;
+      }
     }
   }
 </style>

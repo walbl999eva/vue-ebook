@@ -76,10 +76,10 @@
         line-height: 20px;
         padding: 10px 20px;
         box-sizing: border-box;
-        background: #ccc;
+        background: $color-blue;
         border-radius: 10px;
         font-size: 14px;
-        color: white;
+        color: #fff;
         .toast {
           text-align: center;
           word-break: break-all;

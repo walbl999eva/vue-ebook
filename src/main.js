@@ -7,6 +7,8 @@ import './assets/js/rem'
 import './assets/styles/icon.css'
 import './assets/styles/global.scss'
 // import './mock'
+import './utils/boost'
+import './utils/create-api'
 
 Vue.config.productionTip = false
 

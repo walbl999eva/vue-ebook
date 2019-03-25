@@ -123,3 +123,11 @@ export function getLocale () {
 export function saveLocale (locale) {
   return setLocalStroage('locale', locale)
 }
+
+export function saveBookShelf(shelf) {
+  return setLocalStroage('shelf', shelf)
+}
+
+export function getBookShelf() {
+  return getLocalStroage('shelf')
+}

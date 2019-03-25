@@ -1,15 +1,18 @@
 <template>
   <div class="store-shelf">
-    <shelf-title :title="$t('shelf.title')"/>
+    <shelf-title :title="shelfCategory.title"/>
     <scroll class="store-shelf-scroll-wrapper"
             :top="0"
             :bottom="scrollBottom"
             @onScroll="onScroll"
             ref="scroll"
+            v-if="ifShowList"
     >
-      <shelf-search/>
-      <shelf-list :data="shelfList"/>
+      <shelf-list :top="42" :data="shelfCategory.itemList"/>
     </scroll>
+    <div class="store-shelf-empty-view" v-else>
+      {{$t('shelf.groupNone')}}
+    </div>
     <shelf-footer/>
   </div>
 </template>
@@ -18,13 +21,13 @@
   import ShelfTitle from '../../components/shelf/ShelfTitle'
   import { storeShelfMixin } from '../../utils/mixin'
   import Scroll from '../../components/common/Scroll'
-  import ShelfSearch from '../../components/shelf/ShelfSearch'
   import ShelfList from '../../components/shelf/ShelfList'
   import ShelfFooter from '../../components/shelf/ShelfFooter'
 
   export default {
     name: 'StoreShelf',
     mixins: [storeShelfMixin],
+    components: { ShelfFooter, ShelfList, Scroll, ShelfTitle },
     data() {
       return {
         scrollBottom: 0
@@ -33,21 +36,26 @@
     watch: {
       isEditMode(v) {
         this.scrollBottom = v ? 48 : 0
-        this.$nextTick(() => {
-          this.$refs.scroll.refresh()
-        })
+        if (this.$refs.scroll) {
+          this.$nextTick(() => {
+            this.$refs.scroll.refresh()
+          })
+        }
       }
     },
-    components: { ShelfFooter, ShelfList, ShelfSearch, Scroll, ShelfTitle },
+    computed: {
+      ifShowList() {
+        return this.shelfCategory && this.shelfCategory.itemList && this.shelfCategory.itemList.length > 0
+      }
+    },
     methods: {
       onScroll(offsetY) {
         this.setOffsetY(offsetY)
       }
     },
     mounted () {
-      this.getShelfList()
-      this.setShelfCategory([])
-      this.setCurrentType(1)
+      this.getShelfCategoryList(this.$route.query.title)
+      this.setCurrentType(2)
     }
   }
 </script>
@@ -66,6 +74,16 @@
       top: 0;
       left: 0;
       z-index: 101;
+    }
+    .store-shelf-empty-view{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-size: 14px;
+      color: #333;
+      @include center;
     }
   }
 </style>

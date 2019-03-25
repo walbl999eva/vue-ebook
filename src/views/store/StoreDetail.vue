@@ -80,11 +80,14 @@
   import Toast from '../../components/common/Toast'
   import { detail } from '../../api/store'
   import { px2rem, realPx } from '../../utils/utils'
+  import { getLocalForage } from '../../utils/localForage'
+  import { storeShelfMixin } from '../../utils/mixin'
   import Epub from 'epubjs'
 
   global.ePub = Epub
 
   export default {
+    mixins: [storeShelfMixin],
     components: {
       DetailTitle,
       Scroll,
@@ -122,15 +125,28 @@
         return this.metadata ? this.metadata.creator : ''
       },
       inBookShelf() {
-        if (this.bookItem && this.bookShelf) {
-          const flatShelf = (function flatten(arr) {
-            return [].concat(...arr.map(v => v.itemList ? [v, ...flatten(v.itemList)] : v))
-          })(this.bookShelf).filter(item => item.type === 1)
-          const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
-          return book && book.length > 0
+        if (this.bookItem && this.shelfList && this.shelfList.length > 0) {
+          const book = this.shelfList.filter(book => {
+            if (book.type === 1) {
+              return book.fileName === this.bookItem.fileName
+            } else if (book.type === 2 && book.itemList && book.itemList.length > 0) {
+              return book.itemList.some(subBook => subBook.fileName === this.bookItem.fileName)
+            }
+          })
+          return book && book.length === 1
         } else {
           return false
         }
+
+        // if (this.bookItem && this.shelfList) {
+        //   const flatShelf = (function flatten(arr) {
+        //     return [].concat(...arr.map(v => v.itemList ? [v, ...flatten(v.itemList)] : v))
+        //   })(this.shelfList).filter(item => item.type === 1)
+        //   const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
+        //   return book && book.length > 0
+        // } else {
+        //   return false
+        // }
       }
     },
     data() {
@@ -164,6 +180,24 @@
         })
       },
       trialListening() {
+        getLocalForage(this.bookItem.fileName, (err, blob) => {
+          if (!err && blob && blob instanceof Blob) {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName,
+                opf: this.opf
+              }
+            })
+          }
+        })
       },
       read(item) {
         this.$router.push({
